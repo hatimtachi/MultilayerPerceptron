@@ -13,20 +13,18 @@
 #include <stdlib.h>
 #include <math.h>
 #include "NeuronStructure.h"
+#include "CalculatedNeuron.h"
 
-void    numberOfNeuronsPerLayer     (int *vectornumberOfNeuronsPerLayer,int numberOfHiddenAndOutputNeurons);
+void    networkInitialization       (int numberOfInputNeurons,int numberOfHiddenAndOutputNeurons,int lengthOfOutput,
+                                     int *vectornumberOfNeuronsPerLayer,double *vectorExpected,inputNeuron *inputNeuronNetwork,
+                                     Data *inputData,Data *outputData,layer *layerOfNeuronNetwork);
 
 void    configurationLayers         (int numberOfHiddenAndOutputNeurons,int numberOfInputNeurons,int *vectornumberOfNeuronsPerLayer
                                      ,layer *layerOfNeuronNetwork);
-
-void    configurationOfNeuronsValue (int numberOfHiddenAndOutputNeurons,int *vectornumberOfNeuronsPerLayer
-                                     ,inputNeuron *inputNeuronNetwork, layer *layerOfNeuronNetwork);
 
 void    displaysTheNeuralNetwork    (int *vectorOfNumberOfNeuronsPerLayer,int numberOfInputNeurons
                                      ,int numberOfHiddenAndOutputNeurons ,inputNeuron *inputNeuronNetwork
                                      ,layer *layerOfNeuronNetwork);
 
-double  sigmoidEquation             (double value);
 
-double  sigmoidDerivative           (double value);
 #endif /* NeuronConfiguration_h */

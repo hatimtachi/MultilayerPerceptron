@@ -10,6 +10,12 @@
 #define NeuronStructure_h
 
 
+typedef struct{
+    
+    double *vector;
+    
+}Data;
+
 typedef struct {
     
     double value;
@@ -20,6 +26,7 @@ typedef struct{
     
     double value;
     double *weights;
+    double *oldWeights;
     int number;
     int lenghtOfWeights;
     

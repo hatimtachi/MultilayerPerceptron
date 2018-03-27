@@ -9,16 +9,33 @@
 #include "NeuronConfiguration.h"
 
 
-void numberOfNeuronsPerLayer(int *vectornumberOfNeuronsPerLayer,int numberOfHiddenAndOutputNeurons){
+
+void networkInitialization(int numberOfInputNeurons,int numberOfHiddenAndOutputNeurons,int lengthOfOutput,int *vectornumberOfNeuronsPerLayer,double *vectorExpected,inputNeuron *inputNeuronNetwork,Data *inputData,Data *outputData,layer *layerOfNeuronNetwork){
     
-    char buffer[50];
+    for (int i = 0; i < numberOfInputNeurons; i++) {
+        inputNeuronNetwork[i].value = inputData[0].vector[i];
+    }
+    for (int i = 0; i < lengthOfOutput; i++) {
+        vectorExpected[i] = outputData[0].vector[i];
+    }
     
+    
+    double value = 0;
     for (int i = 0; i < numberOfHiddenAndOutputNeurons; i++) {
-        
-        printf("number of neurons per layer in position %d : \n",i);
-        gets(buffer);
-        vectornumberOfNeuronsPerLayer[i] = atoi(buffer);
-        
+        for (int j = 0; j < vectornumberOfNeuronsPerLayer[i]; j++) {
+            for (int w =0; w < layerOfNeuronNetwork->layer[i][j].lenghtOfWeights; w++) {
+                if (i == 0) {
+                    value = 0.5;
+                }else{
+                    value = 1;
+                }
+                
+                
+                layerOfNeuronNetwork->layer[i][j].weights[w] = randBetweenZandO();
+                layerOfNeuronNetwork->layer[i][j].oldWeights[w] = layerOfNeuronNetwork->layer[i][j].weights[w];
+                
+            }
+        }
     }
 }
 
@@ -33,13 +50,15 @@ void configurationLayers(int numberOfHiddenAndOutputNeurons,int numberOfInputNeu
         
             if (i == 0) {
             
-                layerOfNeuronNetwork->layer[i][j].weights = calloc(numberOfInputNeurons, sizeof(double));
-                layerOfNeuronNetwork->layer[i][j].lenghtOfWeights = numberOfInputNeurons;
+                layerOfNeuronNetwork->layer[i][j].weights           = calloc(numberOfInputNeurons, sizeof(double));
+                layerOfNeuronNetwork->layer[i][j].oldWeights        = calloc(numberOfInputNeurons, sizeof(double));
+                layerOfNeuronNetwork->layer[i][j].lenghtOfWeights   = numberOfInputNeurons;
             
             }else{
             
-                layerOfNeuronNetwork->layer[i][j].weights = calloc(vectornumberOfNeuronsPerLayer[i - 1], sizeof(double));
-                layerOfNeuronNetwork->layer[i][j].lenghtOfWeights = vectornumberOfNeuronsPerLayer[i - 1];
+                layerOfNeuronNetwork->layer[i][j].weights           = calloc(vectornumberOfNeuronsPerLayer[i - 1], sizeof(double));
+                layerOfNeuronNetwork->layer[i][j].oldWeights        = calloc(vectornumberOfNeuronsPerLayer[i - 1], sizeof(double));
+                layerOfNeuronNetwork->layer[i][j].lenghtOfWeights   = vectornumberOfNeuronsPerLayer[i - 1];
             }
         
         }
@@ -48,69 +67,36 @@ void configurationLayers(int numberOfHiddenAndOutputNeurons,int numberOfInputNeu
 
 /*********************************************************************************************/
 
-void configurationOfNeuronsValue(int numberOfHiddenAndOutputNeurons,int *vectornumberOfNeuronsPerLayer,inputNeuron *inputNeuronNetwork, layer *layerOfNeuronNetwork){
-    
-    for (int i = 0; i < numberOfHiddenAndOutputNeurons; i++) {
-        for (int j = 0; j < vectornumberOfNeuronsPerLayer[i]; j++) {
-         
-            if (i == 0) {
-                for (int k = 0; k < layerOfNeuronNetwork->layer[i][j].lenghtOfWeights; k++) {
-                    
-                    layerOfNeuronNetwork->layer[i][j].value +=
-                    layerOfNeuronNetwork->layer[i][j].weights[k] * inputNeuronNetwork[k].value;
-                    
-                }
-            }else{
-                
-                for (int k = 0; k < layerOfNeuronNetwork->layer[i][j].lenghtOfWeights; k++) {
-                    
-                    layerOfNeuronNetwork->layer[i][j].value +=
-                    layerOfNeuronNetwork->layer[i][j].weights[k] * layerOfNeuronNetwork->layer[i - 1][j].value;
-                }
-            }
-            
-            layerOfNeuronNetwork->layer[i][j].value = sigmoidEquation(layerOfNeuronNetwork->layer[i][j].value);
-            
-        }
-    }
-    
-}
-
-/*********************************************************************************************/
-
 void displaysTheNeuralNetwork(int *vectorOfNumberOfNeuronsPerLayer,int numberOfInputNeurons ,int numberOfHiddenAndOutputNeurons ,inputNeuron *inputNeuronNetwork ,layer *layerOfNeuronNetwork){
-    printf("input values :\n");
+    printf("input values :\n\n");
     for (int i = 0; i < numberOfInputNeurons; i++) {
         printf("\t %lf ",inputNeuronNetwork[i].value);
     }
     printf("\n*****************\n");
     
     for (int i = 0; i < numberOfHiddenAndOutputNeurons; i++) {
-        printf("layer :: %d ::\n",i);
+        if (i == numberOfHiddenAndOutputNeurons - 1) {
+            printf("output ::\n\n");
+        }else{
+            printf("layer :: %d ::\n\n",i);
+        }
         for (int j = 0; j < vectorOfNumberOfNeuronsPerLayer[i]; j++) {
             
-            printf("number of neuron in this layer : %d && size of weights is %d && value is : %lf \n",layerOfNeuronNetwork->layer[i][j].number,layerOfNeuronNetwork->layer[i][j].lenghtOfWeights,layerOfNeuronNetwork->layer[i][j].value);
+            printf("number of neuron in this layer : %d && size of weights is %d && value is : %lf \n\n",layerOfNeuronNetwork->layer[i][j].number,layerOfNeuronNetwork->layer[i][j].lenghtOfWeights,layerOfNeuronNetwork->layer[i][j].value);
             printf("weights values is :\n");
             for (int k = 0; k < layerOfNeuronNetwork->layer[i][j].lenghtOfWeights; k++) {
                 printf("\t %lf ",layerOfNeuronNetwork->layer[i][j].weights[k]);
             }
-            printf("\n");
+            printf("\nold weights values is :\n");
+            for (int k = 0; k < layerOfNeuronNetwork->layer[i][j].lenghtOfWeights; k++) {
+                printf("\t %lf ",layerOfNeuronNetwork->layer[i][j].oldWeights[k]);
+            }
+            printf("\n\n");
         }
         printf("\n******************\n");
     }
 }
 
-/*********************************************************************************************/
-
-double sigmoidEquation(double value){
-    return 1. / (1.+ (double)exp(-1 * value));
-}
-
-/*********************************************************************************************/
-
-double sigmoidDerivative(double value){
-    return value * (1 - value);
-}
 
 
 
