@@ -5,8 +5,8 @@ Its multiple layers and non-linear activation distinguish MLP from a linear perc
 It can distinguish data that is not linearly separable.
 
 ## Usage
-#learn rate (eta) = 0.001
 ```bash
 make
+#learn rate (eta) = 0.001
 ./Pmc 0.001
 ```
